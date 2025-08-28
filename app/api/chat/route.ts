@@ -24,16 +24,16 @@ export async function POST(req: Request) {
     messages: convertToModelMessages(messages),
     stopWhen: stepCountIs(5),
     tools: {
-      addResource: tool({
-        description: `add a resource to your knowledge base.
-          If the user provides a random piece of knowledge unprompted, use this tool without asking for confirmation.`,
-        inputSchema: z.object({
-          content: z
-            .string()
-            .describe("the content or resource to add to the knowledge base"),
-        }),
-        execute: async ({ content }) => createResource({ content }),
-      }),
+      // addResource: tool({
+      //   description: `add a resource to your knowledge base.
+      //     If the user provides a random piece of knowledge unprompted, use this tool without asking for confirmation.`,
+      //   inputSchema: z.object({
+      //     content: z
+      //       .string()
+      //       .describe("the content or resource to add to the knowledge base"),
+      //   }),
+      //   execute: async ({ content }) => createResource({ content }),
+      // }),
       getInformation: tool({
         description: `get information from your knowledge base to answer questions.`,
         inputSchema: z.object({
