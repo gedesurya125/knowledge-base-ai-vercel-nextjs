@@ -66,7 +66,7 @@ export default function Chat() {
               }
             }}
             type="submit"
-            className="border border-1 border-black border-solid px-5 py-2 rounded ml-2 hover:bg-gray-500 hover:text-white relative flex justify-center items-center w-max"
+            className="border border-1 border-black border-solid px-5 py-2 rounded ml-2 hover:bg-gray-500 hover:text-white relative flex justify-center items-center w-max group"
           >
             <span
               className={clsx({
@@ -77,7 +77,7 @@ export default function Chat() {
             </span>
             {loading && (
               <span className={`absolute`}>
-                <Spinner className="text-gray-500" />
+                <Spinner className="text-gray-500 group-hover:text-white" />
               </span>
             )}
           </button>
