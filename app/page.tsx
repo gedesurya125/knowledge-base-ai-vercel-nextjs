@@ -45,6 +45,7 @@ export default function Chat() {
             className="border border-1 border-black border-solid px-5 py-2 rounded"
             value={password}
             onChange={(e) => {
+              setIsAuthenticated(null);
               setPassword(e.target.value);
             }}
           />
