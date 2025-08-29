@@ -1,24 +1,23 @@
 "use server";
 
-import {
-  NewResourceParams,
-  insertResourceSchema,
-  resources,
-} from "@/lib/db/schema/resources";
+import { insertResourceSchema, resources } from "@/lib/db/schema/resources";
 import { db } from "../db";
-import { generateEmbeddings } from "../ai/embedding";
+import { generateEmbeddingsForPage } from "../ai/embedding";
 import { embeddings as embeddingsTable } from "../db/schema/embeddings";
+import { ScrapedPageType } from "../db/utils/pageScraper";
 
-export const createResource = async (input: NewResourceParams) => {
+export const createResource = async (input: ScrapedPageType) => {
   try {
-    const { content } = insertResourceSchema.parse(input);
+    const { content, url, title } = insertResourceSchema.parse(input);
 
     const [resource] = await db
       .insert(resources)
-      .values({ content })
+      .values({ content, url, title })
       .returning();
 
-    const embeddings = await generateEmbeddings(content);
+    const embeddings = await generateEmbeddingsForPage(input);
+
+    // Connecting the embedding table with the resource table
     await db.insert(embeddingsTable).values(
       embeddings.map((embedding) => ({
         resourceId: resource.id,

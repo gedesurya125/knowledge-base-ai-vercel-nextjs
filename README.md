@@ -16,3 +16,4 @@ This project will use the following stack:
 ## Self note
 
 - Installing PNPM https://pnpm.io/installation
+- example of RAG https://medium.com/@olliedoesdev/create-a-rag-application-using-next-js-supabase-and-openais-text-embedding-3-small-model-7f290c028766

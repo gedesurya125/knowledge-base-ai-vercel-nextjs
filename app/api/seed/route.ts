@@ -9,6 +9,6 @@ export async function GET(req: NextRequest) {
   if (process.env.SEED_SECRET && secret !== definedSecret)
     return NextResponse.json({ message: "Unauthorized" });
 
-  const sitemmap = await loadData();
-  return NextResponse.json(sitemmap.urlset.url);
+  const data = await loadData();
+  return NextResponse.json({ data });
 }

@@ -1,28 +1,34 @@
 import { embed, embedMany } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { db } from "../db";
-import { cosineDistance, desc, gt, sql } from "drizzle-orm";
+import { cosineDistance, desc, eq, gt, sql } from "drizzle-orm";
 import { embeddings } from "../db/schema/embeddings";
+import { resources } from "../db/schema/resources";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import { ScrapedPageType } from "../db/utils/pageScraper";
 
-const embeddingModel = openai.embedding("text-embedding-ada-002");
+const embeddingModel = openai.embedding("text-embedding-3-small");
 
-// detail break source material into smaller chunks
-const generateChunks = (input: string): string[] => {
-  return input
-    .trim()
-    .split(".")
-    .filter((i) => i !== "");
-};
+//? using library instead of manually create chunks
+export const splitter = new RecursiveCharacterTextSplitter({
+  chunkSize: 100,
+  chunkOverlap: 0,
+});
 
-export const generateEmbeddings = async (
-  value: string
+export const generateEmbeddingsForPage = async (
+  value: ScrapedPageType
 ): Promise<Array<{ embedding: number[]; content: string }>> => {
-  const chunks = generateChunks(value);
+  const chunks = await splitter.splitText(value.content);
+
   const { embeddings } = await embedMany({
     model: embeddingModel,
     values: chunks,
   });
-  return embeddings.map((e, i) => ({ content: chunks[i], embedding: e }));
+
+  return embeddings.map((e, i) => ({
+    content: chunks[i],
+    embedding: e,
+  }));
 };
 
 export const generateEmbedding = async (value: string): Promise<number[]> => {
@@ -41,8 +47,14 @@ export const findRelevantContent = async (userQuery: string) => {
     userQueryEmbedded
   )})`;
   const similarGuides = await db
-    .select({ name: embeddings.content, similarity })
+    .select({
+      content: embeddings.content,
+      url: resources.url,
+      title: resources.title,
+      similarity,
+    })
     .from(embeddings)
+    .leftJoin(resources, eq(embeddings.resourceId, resources.id))
     .where(gt(similarity, 0.5))
     .orderBy((t) => desc(t.similarity))
     .limit(4);

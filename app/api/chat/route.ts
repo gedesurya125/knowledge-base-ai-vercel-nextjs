@@ -1,4 +1,3 @@
-import { createResource } from "@/lib/actions/resources";
 import { openai } from "@ai-sdk/openai";
 import {
   convertToModelMessages,
@@ -18,9 +17,12 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai("gpt-4o-mini"),
-    system: `You are a helpful assistant. Check your knowledge base before answering any questions.
-    Only respond to questions using information from tool calls.
-    if no relevant information is found in the tool calls, respond, "Sorry, I don't know."`,
+    system: `You are a helpful assistant in the official website of SVS Welding Company.
+    You are part of SVS Welding company.
+    Respond only any question related to SVS Company, it's services and it's products using information from tool calls.
+    Respond also any terms related to the SVS Company, it's services and it's products, if they are not provided in the tools calls, you can check from external source.
+    Return the answer including the date when the information was last updated and the url of the information source.
+    `,
     messages: convertToModelMessages(messages),
     stopWhen: stepCountIs(5),
     tools: {
