@@ -3,13 +3,15 @@ import React from "react";
 
 import { useChat } from "@ai-sdk/react";
 import { useState } from "react";
+import clsx from "clsx";
+import { Spinner } from "@/components/icon/Spinner";
 
 export default function Chat() {
   const [input, setInput] = useState("");
   const { messages, sendMessage } = useChat();
 
   const [password, setPassword] = React.useState("");
-
+  const [loading, setLoading] = React.useState(false);
   const isAuthEnabled = process?.env?.NEXT_PUBLIC_ENABLE_AUTH;
   const [isAuthenticated, setIsAuthenticated] = React.useState(
     isAuthEnabled ? null : true
@@ -19,6 +21,7 @@ export default function Chat() {
     password: string,
     callBack?: (response: { isAuthenticated: boolean } | null) => void
   ) => {
+    setLoading(true);
     const response = await fetch("/api/auth", {
       method: "POST",
       body: JSON.stringify({
@@ -29,15 +32,17 @@ export default function Chat() {
     if (callBack) {
       callBack(response);
     }
+    setLoading(false);
   };
 
   if (!isAuthenticated)
     return (
-      <div className="flex justify-center  items-center h-screen w-screen">
+      <div className="flex justify-center flex-col  items-center h-screen w-screen">
         <form
           onSubmit={(e) => {
             e.preventDefault();
           }}
+          className="flex"
         >
           <input
             type="password"
@@ -61,14 +66,25 @@ export default function Chat() {
               }
             }}
             type="submit"
-            className="border border-1 border-black border-solid px-5 py-2 rounded ml-2 hover:bg-gray-500 hover:text-white"
+            className="border border-1 border-black border-solid px-5 py-2 rounded ml-2 hover:bg-gray-500 hover:text-white relative flex justify-center items-center w-max"
           >
-            Login
+            <span
+              className={clsx({
+                "opacity-0": loading,
+              })}
+            >
+              Login
+            </span>
+            {loading && (
+              <span className={`absolute`}>
+                <Spinner className="text-gray-500" />
+              </span>
+            )}
           </button>
-          {Boolean(password) && isAuthenticated === false && (
-            <p className="mt-1 text-red-600">Wrong Password</p>
-          )}
         </form>
+        {Boolean(password) && isAuthenticated === false && (
+          <p className="mt-1 text-red-600">Wrong Password</p>
+        )}
       </div>
     );
   return (
