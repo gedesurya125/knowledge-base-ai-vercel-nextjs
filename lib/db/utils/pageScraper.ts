@@ -203,7 +203,5 @@ function htmlToEmbedText(html: string, url: string, title: string) {
     .replace(/\n{3,}/g, "\n\n")
     ?.trim();
 
-  console.log("this is the out", out);
-
   return text;
 }
