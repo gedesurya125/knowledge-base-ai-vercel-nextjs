@@ -7,9 +7,15 @@ import { embeddings as embeddingsTable } from "../db/schema/embeddings";
 import { ScrapedPageType } from "../db/utils/pageScraper";
 import { eq } from "drizzle-orm";
 
-export const createResource = async (input: ScrapedPageType) => {
+export const createResource = async (
+  input: ScrapedPageType,
+  lastPageModified: Date
+) => {
   try {
-    const { content, url, title } = insertResourceSchema.parse(input);
+    const { content, url, title, lastModified } = insertResourceSchema.parse({
+      ...input,
+      lastModified: lastPageModified,
+    });
 
     console.log("this is the new url", url);
 
@@ -26,7 +32,7 @@ export const createResource = async (input: ScrapedPageType) => {
 
     const [resource] = await db
       .insert(resources)
-      .values({ content, url, title })
+      .values({ content, url, title, lastModified })
       .returning();
 
     const embeddings = await generateEmbeddingsForPage(input);

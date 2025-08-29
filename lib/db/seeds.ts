@@ -2,6 +2,9 @@ import { xml2json } from "xml-js";
 import { createResource } from "../actions/resources";
 import { scrapePage } from "./utils/pageScraper";
 import { splitter } from "../ai/embedding";
+import { db } from ".";
+import { resources } from "./schema/resources";
+import { eq, SimplifyMappedType } from "drizzle-orm";
 
 const fetchSitemapToJson = async () => {
   const sitemapUrl = process.env.SITEMAP_URL;
@@ -33,21 +36,26 @@ const dummyPages = [
   },
 ];
 
+type SitemapItemType = { loc: { _text: string }; lastmod: { _text: string } };
+
 export const loadData = async () => {
   const sitemapJson = await fetchSitemapToJson();
-  const sitemapUrls = sitemapJson?.urlset?.url;
+  const sitemapUrls = sitemapJson?.urlset?.url as SitemapItemType[];
   if (!sitemapUrls || sitemapUrls.length === 0) return null;
   // https://medium.com/@olliedoesdev/create-a-rag-application-using-next-js-supabase-and-openais-text-embedding-3-small-model-7f290c028766
 
-  const dePages = sitemapUrls?.filter(
-    (sitemapItem: { loc: { _text: string } }) => {
+  const dePages: SitemapItemType[] = sitemapUrls?.filter(
+    (sitemapItem: SitemapItemType) => {
       return (sitemapItem.loc._text as string).startsWith(
         "https://www.svs-schweisstechnik.de/de"
       );
     }
   );
 
-  const willFetchedPages = dePages.slice(0, process?.env?.SCRAPE_LIMIT || 1);
+  const willFetchedPages = (dePages || []).slice(
+    0,
+    process?.env?.SCRAPE_LIMIT ? Number(process?.env?.SCRAPE_LIMIT) : 1
+  );
 
   const contents = [];
 
@@ -64,14 +72,34 @@ export const loadData = async () => {
       );
     }
 
+    const lastPageModified = new Date(sitemapItem.lastmod._text);
+
+    const existingResources = await db
+      .select({ url: resources.url, lastModified: resources.lastModified })
+      .from(resources)
+      .where(eq(resources.url, urlToScrape));
+
+    if (
+      existingResources &&
+      existingResources[0]?.lastModified &&
+      existingResources[0].lastModified >= lastPageModified
+    ) {
+      console.log("this page is up to date", sitemapItem);
+      contents.push({ sitemap: sitemapItem, message: "up to date" });
+
+      continue;
+    }
+
     console.log("Scrapping: ", urlToScrape);
     const scrappedPage = await scrapePage(urlToScrape);
 
-    const chunked = await splitter.splitText(scrappedPage.content);
+    // // Just for development ====
+    // const chunked = await splitter.splitText(scrappedPage.content);
+    // //===
 
-    contents.push({ scrappedPage, chunked });
+    const message = await createResource(scrappedPage, lastPageModified);
 
-    const message = await createResource(scrappedPage);
+    contents.push({ sitemap: sitemapItem, message });
 
     console.log("createResourcesResponse", message);
   }

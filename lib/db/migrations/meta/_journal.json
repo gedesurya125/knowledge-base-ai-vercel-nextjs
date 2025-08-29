@@ -15,6 +15,13 @@
       "when": 1756457299028,
       "tag": "0001_clammy_king_bedlam",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1756466859120,
+      "tag": "0002_previous_beyonder",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,1 @@
+ALTER TABLE "resources" ADD COLUMN "last_modified" timestamp;

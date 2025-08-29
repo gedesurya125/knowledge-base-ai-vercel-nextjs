@@ -18,6 +18,7 @@ export const resources = pgTable("resources", {
   url: text("url").notNull(),
   title: text("title").notNull(),
   content: text("content").notNull(),
+  lastModified: timestamp("last_modified"),
   createdAt: timestamp("created_at")
     .notNull()
     .default(sql`now()`),
