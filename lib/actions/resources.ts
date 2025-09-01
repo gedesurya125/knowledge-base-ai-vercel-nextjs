@@ -19,6 +19,7 @@ export const createResource = async (
 
     console.log("this is the new url", url);
 
+    // Check existing resource
     const existingResources = await db
       .select({ url: resources.url })
       .from(resources)
@@ -26,10 +27,12 @@ export const createResource = async (
 
     console.log("this is the existing resources", existingResources);
 
+    // If found delete the existing resource (Current resource considered as out dated because the freshness of the content already checked before this function calls)
     if (existingResources && existingResources[0]?.url) {
       await db.delete(resources).where(eq(resources.url, url));
     }
 
+    // Insert a new resource to the page
     const [resource] = await db
       .insert(resources)
       .values({ content, url, title, lastModified })

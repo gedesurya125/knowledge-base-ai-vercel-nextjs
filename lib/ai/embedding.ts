@@ -18,9 +18,12 @@ export const splitter = new RecursiveCharacterTextSplitter({
 export const generateEmbeddingsForPage = async (
   value: ScrapedPageType
 ): Promise<Array<{ embedding: number[]; content: string }>> => {
+  // chunk process
   const chunks = await splitter.splitText(value.content);
 
+  // embedding process
   const { embeddings } = await embedMany({
+    // we can check the token usage from the usage key source: https://ai-sdk.dev/docs/ai-sdk-core/embeddings#token-usage
     model: embeddingModel,
     values: chunks,
   });
@@ -33,10 +36,13 @@ export const generateEmbeddingsForPage = async (
 
 export const generateEmbedding = async (value: string): Promise<number[]> => {
   const input = value.replaceAll("\\n", " ");
-  const { embedding } = await embed({
+  const { embedding, usage } = await embed({
     model: embeddingModel,
     value: input,
   });
+
+  console.log("this is the token used when asking", usage);
+
   return embedding;
 };
 
@@ -45,7 +51,7 @@ export const findRelevantContent = async (userQuery: string) => {
   const similarity = sql<number>`1 - (${cosineDistance(
     embeddings.embedding,
     userQueryEmbedded
-  )})`;
+  )})`; //? this function is the same with cosineSimilarity as cosineDistance = 1 - cosineSimilarity source https://medium.com/@milana.shxanukova15/cosine-distance-and-cosine-similarity-a5da0e4d9ded
   const similarGuides = await db
     .select({
       content: embeddings.content,

@@ -39,6 +39,7 @@ const dummyPages = [
 type SitemapItemType = { loc: { _text: string }; lastmod: { _text: string } };
 
 export const loadData = async () => {
+  // Get the sitemap
   const sitemapJson = await fetchSitemapToJson();
   const sitemapUrls = sitemapJson?.urlset?.url as SitemapItemType[];
   if (!sitemapUrls || sitemapUrls.length === 0) return null;
@@ -93,6 +94,8 @@ export const loadData = async () => {
     }
 
     console.log("Scrapping: ", urlToScrape);
+
+    // Scrapping process
     const scrappedPage = await scrapePage(urlToScrape);
 
     // // Just for development ====
