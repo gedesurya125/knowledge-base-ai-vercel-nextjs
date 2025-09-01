@@ -90,11 +90,11 @@ export default function Chat() {
   return (
     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
       <div className="space-y-4">
-        {messages.map((m) => (
-          <div key={m.id} className="whitespace-pre-wrap">
+        {messages.map((messageItem) => (
+          <div key={messageItem.id} className="whitespace-pre-wrap">
             <div>
-              <div className="font-bold">{m.role}</div>
-              {m.parts.map((part) => {
+              <div className="font-bold">{messageItem.role}</div>
+              {messageItem.parts.map((part) => {
                 switch (part.type) {
                   case "text":
                     return <p>{part.text}</p>;
