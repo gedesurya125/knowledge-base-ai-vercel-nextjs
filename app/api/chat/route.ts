@@ -25,6 +25,7 @@ export async function POST(req: Request) {
     `,
     messages: convertToModelMessages(messages),
     stopWhen: stepCountIs(5),
+    maxOutputTokens: 500,
     tools: {
       // addResource: tool({
       //   description: `add a resource to your knowledge base.
