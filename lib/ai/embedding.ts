@@ -57,6 +57,7 @@ export const findRelevantContent = async (userQuery: string) => {
       content: embeddings.content,
       url: resources.url,
       title: resources.title,
+      lastUpdated: resources.lastModified,
       similarity,
     })
     .from(embeddings)
