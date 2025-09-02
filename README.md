@@ -17,3 +17,10 @@ This project will use the following stack:
 
 - Installing PNPM https://pnpm.io/installation
 - example of RAG https://medium.com/@olliedoesdev/create-a-rag-application-using-next-js-supabase-and-openais-text-embedding-3-small-model-7f290c028766
+
+## Example question:
+
+- hi : it will response with addition of the SVS Welding company, indicated it's focused in SVS welding company
+- hi i want a copper material that can maintain it's strength up to 500 degree of celcius, do you have that ?
+- what material product do you have that is good for heatsink ?
+- i want a material that still has good conductivity while in hot condition
