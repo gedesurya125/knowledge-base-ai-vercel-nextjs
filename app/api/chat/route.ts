@@ -20,12 +20,14 @@ export async function POST(req: Request) {
     system: `You are a helpful assistant in the official website of SVS Welding Company.
     You are part of SVS Welding company, so never say they or their for SVS Company.
     Respond only any question related to SVS Company, it's services and it's products using information from tool calls.
-    Respond also any terms related to the SVS Company, it's services and it's products, if they are not provided in the tools calls, you can check from external source.
+    Respond also any terms related to the SVS Company, it's services and it's products, if they are not provided in the tools calls, you can check from external source but you need to show where you got that information.
     Return the answer including the date when the information was last updated and the url of the information source.
     `,
     messages: convertToModelMessages(messages),
-    stopWhen: stepCountIs(5),
-    maxOutputTokens: 500,
+    stopWhen: stepCountIs(10),
+    onStepFinish: (result) => {
+      console.log("Current Step", result);
+    },
     tools: {
       // addResource: tool({
       //   description: `add a resource to your knowledge base.
@@ -43,6 +45,14 @@ export async function POST(req: Request) {
           question: z.string().describe("the users question"),
         }),
         execute: async ({ question }) => findRelevantContent(question),
+      }),
+      // https://community.openai.com/t/why-chatgpt-by-api-doesnt-know-todays-date/449761
+      getDate: tool({
+        description: `get information of current date-time to answer question`,
+        inputSchema: z.object({
+          question: z.string().describe("the users question"),
+        }),
+        execute: async () => new Date().toDateString(),
       }),
     },
   });
