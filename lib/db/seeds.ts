@@ -55,7 +55,7 @@ export const loadData = async () => {
 
   console.log("this is the scrape.limit", process?.env?.SCRAPE_LIMIT);
 
-  const willFetchedPages = (dePages || []).slice(
+  const willFetchedPages = (sitemapUrls || []).slice(
     0,
     process?.env?.SCRAPE_LIMIT ? Number(process?.env?.SCRAPE_LIMIT) : 1
   );
