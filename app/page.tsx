@@ -107,7 +107,8 @@ export default function Chat() {
                         {part.state === "output-available"
                           ? "ed"
                           : "ing"} tool: {part.type}
-                        <pre className=" bg-black text-white p-2 mt-2 whitespace-pre-wrap break-words">
+                        <pre className=" bg-gray-500 text-white p-2 mt-2 whitespace-pre-wrap break-words rounded">
+                          params:
                           {JSON.stringify(part.input, null, 2)}
                         </pre>
                       </LogContainer>
