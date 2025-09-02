@@ -9,10 +9,12 @@ import { ScrapedPageType } from "../db/utils/pageScraper";
 
 const embeddingModel = openai.embedding("text-embedding-3-small");
 
+//?https://medium.com/@adnanmasood/optimizing-chunking-embedding-and-vectorization-for-retrieval-augmented-generation-ea3b083b68f7
 //? using library instead of manually create chunks
 export const splitter = new RecursiveCharacterTextSplitter({
-  chunkSize: 100,
-  chunkOverlap: 0,
+  chunkSize: 300,
+  chunkOverlap: 30, // Overlap between chunks
+  separators: ["\n\n", "\n", " ", ""],
 });
 
 export const generateEmbeddingsForPage = async (
