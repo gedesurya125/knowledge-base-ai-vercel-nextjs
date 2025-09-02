@@ -25,20 +25,17 @@ const dummyPages = [
   {
     loc: {
       _text:
-        "https://svs-teal.vercel.app/en/materials/copper-materials/cucr1zr/",
+        "https://svs-teal.vercel.app/de/wissens-hub/kupferwerkstoffe/kupfer-kobalt-beryllium-cucobe/",
     },
-  },
-  {
-    loc: {
-      _text:
-        "https://svs-teal.vercel.app/en/materials/copper-materials/cuco2be/",
+    lastmod: {
+      _text: "2025-08-08T08:46:13+0000",
     },
   },
 ];
 
 type SitemapItemType = { loc: { _text: string }; lastmod: { _text: string } };
 
-export const loadData = async () => {
+export const loadData = async (params?: { forceReplace?: boolean }) => {
   // Get the sitemap
   const sitemapJson = await fetchSitemapToJson();
   const sitemapUrls = sitemapJson?.urlset?.url as SitemapItemType[];
@@ -77,20 +74,22 @@ export const loadData = async () => {
 
     const lastPageModified = new Date(sitemapItem.lastmod._text);
 
-    const existingResources = await db
-      .select({ url: resources.url, lastModified: resources.lastModified })
-      .from(resources)
-      .where(eq(resources.url, urlToScrape));
+    if (!params?.forceReplace) {
+      const existingResources = await db
+        .select({ url: resources.url, lastModified: resources.lastModified })
+        .from(resources)
+        .where(eq(resources.url, urlToScrape));
 
-    if (
-      existingResources &&
-      existingResources[0]?.lastModified &&
-      existingResources[0].lastModified >= lastPageModified
-    ) {
-      console.log("this page is up to date", sitemapItem);
-      contents.push({ sitemap: sitemapItem, message: "up to date" });
+      if (
+        existingResources &&
+        existingResources[0]?.lastModified &&
+        existingResources[0].lastModified >= lastPageModified
+      ) {
+        console.log("this page is up to date", sitemapItem);
+        contents.push({ sitemap: sitemapItem, message: "up to date" });
 
-      continue;
+        continue;
+      }
     }
 
     console.log("Scrapping: ", urlToScrape);
