@@ -97,17 +97,48 @@ export default function Chat() {
               {messageItem.parts.map((part) => {
                 switch (part.type) {
                   case "text":
-                    return <p>{part.text}</p>;
+                    return <p className="mt-2">{part.text}</p>;
                   case "tool-addResource":
                   case "tool-getInformation":
+                  case "tool-getDate":
                     return (
-                      <p>
-                        call{part.state === "output-available" ? "ed" : "ing"}{" "}
-                        tool: {part.type}
-                        <pre className="my-4 bg-zinc-100 p-2 rounded-sm">
+                      <LogContainer>
+                        call
+                        {part.state === "output-available"
+                          ? "ed"
+                          : "ing"} tool: {part.type}
+                        <pre className=" bg-black text-white p-2 mt-2 whitespace-pre-wrap break-words">
                           {JSON.stringify(part.input, null, 2)}
                         </pre>
-                      </p>
+                      </LogContainer>
+                    );
+                  case "step-start":
+                    return <LogContainer>{part.type}</LogContainer>;
+                  case "source-url":
+                    return (
+                      <LogContainer>
+                        {part.type} :{part.url}
+                      </LogContainer>
+                    );
+                  case "reasoning":
+                    return (
+                      <LogContainer>
+                        type:{part.type}, state:{part.state}
+                      </LogContainer>
+                    );
+                  case "dynamic-tool":
+                    return (
+                      <LogContainer>
+                        type:{part.type}, tool:{part.toolName}, state:
+                        {part.state}
+                      </LogContainer>
+                    );
+                  case "source-document":
+                    return (
+                      <LogContainer>
+                        type:{part.type}, file-name:
+                        {part.filename} media-type:${part.mediaType}
+                      </LogContainer>
                     );
                 }
               })}
@@ -133,3 +164,14 @@ export default function Chat() {
     </div>
   );
 }
+
+const LogContainer = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <p className="border border-gray-400 rounded p-2 mt-2 relative text-white text-sm bg-gray-400">
+      <span className="bg-gray-400 text-white absolute right-[calc(100%+0.2rem)] h-max w-max py-2 px-3 border border-gray-400 top-[-1px] rounded">
+        LOG :
+      </span>{" "}
+      {children}
+    </p>
+  );
+};
