@@ -23,4 +23,12 @@ This project will use the following stack:
 - hi : it will response with addition of the SVS Welding company, indicated it's focused in SVS welding company
 - hi i want a copper material that can maintain it's strength up to 500 degree of celcius, do you have that ?
 - what material product do you have that is good for heatsink ?
-- i want a material that still has good conductivity while in hot condition
+- Hi do you have dressing products ?
+- How many materials do you have ?
+- Which products has the best heat resistance ?
+- which material has the best electrical conductivity at hot condition ?
+- Which material has higest melting points ?
+- Do you have flat bar of copper ?
+- Do you have rod copper
+- Do you have round bars copper ?
+- What material do you have in plate form ?
