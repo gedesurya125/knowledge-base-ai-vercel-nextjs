@@ -18,10 +18,11 @@ This project will use the following stack:
 - Installing PNPM https://pnpm.io/installation
 - example of RAG https://medium.com/@olliedoesdev/create-a-rag-application-using-next-js-supabase-and-openais-text-embedding-3-small-model-7f290c028766
 - Chunking strategies: https://medium.com/@saxena_rishabh/pros-and-cons-of-different-chunking-strategies-in-language-models-5faf0ecaa262
-- Ingroduction to text-embedding-3-small https://zilliz.com/ai-models/text-embedding-3-small
+- Introduction to text-embedding-3-small https://zilliz.com/ai-models/text-embedding-3-small
 - Best Practice for chunking text: https://dev.to/simplr_sh/the-best-way-to-chunk-text-data-for-generating-embeddings-with-openai-models-56c9
 - Chunking are crucial step https://arxiv.org/html/2505.21700v2#:~:text=Abstract,-Report%20issue%20for&text=Chunking%20is%20a%20crucial%20preprocessing,document%20Information%20Retrieval%20(IR).
 - Token vs chunk https://dev.to/odyash/tokens-vs-chunks-3p5d
+- the optimal chunk token for RAG https://milvus.io/ai-quick-reference/what-is-the-optimal-chunk-size-for-rag-applications
 
 ## Example question:
 
