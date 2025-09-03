@@ -5,6 +5,9 @@ import { useChat } from "@ai-sdk/react";
 import { useState } from "react";
 import clsx from "clsx";
 import { Spinner } from "@/components/icon/Spinner";
+import ReactMarkdown from "react-markdown";
+import rehypeSanitize from "rehype-sanitize";
+import remarkGfm from "remark-gfm";
 
 export default function Chat() {
   const [input, setInput] = useState("");
@@ -91,13 +94,51 @@ export default function Chat() {
     <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
       <div className="space-y-4">
         {messages.map((messageItem) => (
-          <div key={messageItem.id} className="whitespace-pre-wrap">
+          <div key={messageItem.id}>
             <div>
               <div className="font-bold">{messageItem.role}</div>
               {messageItem.parts.map((part) => {
                 switch (part.type) {
                   case "text":
-                    return <p className="mt-2">{part.text}</p>;
+                    return (
+                      <div className="mt-6 grid space-y-6">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          rehypePlugins={[rehypeSanitize]}
+                          components={{
+                            ol: ({ node, ...props }) => {
+                              return <ol className="space-y-8" {...props} />;
+                            },
+                            ul: ({ node, ...props }) => {
+                              return (
+                                <ul className="space-y-5  pl-5" {...props} />
+                              );
+                            },
+                            p: ({ node, ...props }) => {
+                              return <p className="space-y-4" {...props} />;
+                            },
+                            li: ({ node, ...props }) => {
+                              return <li className="space-y-3" {...props} />;
+                            },
+                            a: ({ node, ...props }) => {
+                              return <a className="text-blue-700" {...props} />;
+                            },
+                            h3: ({ node, ...props }) => {
+                              return (
+                                <h3 className="text-xl font-bold" {...props} />
+                              );
+                            },
+                            h2: ({ node, ...props }) => {
+                              return (
+                                <h3 className="text-2xl font-bold" {...props} />
+                              );
+                            },
+                          }}
+                        >
+                          {part.text}
+                        </ReactMarkdown>
+                      </div>
+                    );
                   case "tool-addResource":
                   case "tool-getInformation":
                   case "tool-getDate":
