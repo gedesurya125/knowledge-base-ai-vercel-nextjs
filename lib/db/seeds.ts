@@ -1,7 +1,6 @@
 import { xml2json } from "xml-js";
 import { createResource } from "../actions/resources";
 import { scrapePage } from "./utils/pageScraper";
-import { splitter } from "../ai/embedding";
 import { db } from ".";
 import { resources } from "./schema/resources";
 import { eq, SimplifyMappedType } from "drizzle-orm";
@@ -60,6 +59,7 @@ export const loadData = async (params?: { forceReplace?: boolean }) => {
   const contents = [];
 
   console.log("Fetching...");
+
   for await (const sitemapItem of willFetchedPages) {
     if (!sitemapItem.loc._text) continue;
 
