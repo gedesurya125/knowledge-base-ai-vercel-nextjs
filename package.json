@@ -13,7 +13,8 @@
     "db:pull": "drizzle-kit introspect",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:check": "drizzle-kit check"
+    "db:check": "drizzle-kit check",
+    "postinstall": "mkdir -p public/vendor && cp node_modules/tiktoken/tiktoken_bg.wasm public/vendor/tiktoken_bg.wasm || true"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.22",
