@@ -38,3 +38,4 @@ This project will use the following stack:
 - Do you have rod copper
 - Do you have round bars copper ?
 - What material do you have in plate form ?
+- Please give me specific material you have that has high electrical conductivity.
