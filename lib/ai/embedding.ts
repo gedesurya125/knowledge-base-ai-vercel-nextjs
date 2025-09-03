@@ -3,7 +3,11 @@ import { openai } from "@ai-sdk/openai";
 import { db } from "../db";
 import { cosineDistance, desc, eq, gt, sql } from "drizzle-orm";
 import { embeddings } from "../db/schema/embeddings";
-import { resources } from "../db/schema/resources";
+import {
+  insertResourceSchema,
+  NewResourceParams,
+  resources,
+} from "../db/schema/resources";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { ScrapedPageType } from "../db/utils/pageScraper";
 import { init, encoding_for_model } from "tiktoken/init";
@@ -95,4 +99,21 @@ export const findRelevantContent = async (userQuery: string) => {
     .orderBy((t) => desc(t.similarity))
     .limit(4);
   return similarGuides;
+};
+
+export const createUserResource = async (input: NewResourceParams) => {
+  try {
+    const { content, url, title, lastModified } =
+      insertResourceSchema.parse(input);
+
+    const [resource] = await db
+      .insert(resources)
+      .values({ content, url, title, lastModified })
+      .returning();
+
+    return "Resource successfully created.";
+  } catch (e) {
+    if (e instanceof Error)
+      return e.message.length > 0 ? e.message : "Error, please try again.";
+  }
 };
