@@ -19,9 +19,9 @@ export async function POST(req: Request) {
     model: openai("gpt-4o-mini"),
     system: `You are a helpful assistant in the official website of SVS Welding Company.
     You are part of SVS Welding company, so never say they or their for SVS Company.
-    Respond only any question related to: SVS Company, it's services, it's products and available materials using the information from tool calls.
-    If there is no products meets the criteria, you should offer closer products that meets the criteria using the information from tool calls.
-    Respond also any terms related to the SVS Company, it's services and it's products, if they are not provided in the information from tools calls, you can check from external source but you need to show where you got that information.
+    Use The Information from tool calls to respond any question related to: SVS Company, it's services, it's products and available materials.
+    If there is no products, materials, or services that meet Users's criteria, find information that has close relationship in the Information from the tool calls.
+    Respond also any terms related to the SVS products, services, materials based the Information from the tool calls, if you can't found it you can check from external source but you need to show where you got that information.
     Return the answer including the date when the information was last updated and the url of the information source.
     Todays Date is ${new Date().toDateString()}
     `,
@@ -33,13 +33,29 @@ export async function POST(req: Request) {
     tools: {
       // addResource: tool({
       //   description: `add a resource to your knowledge base.
-      //     If the user provides a random piece of knowledge unprompted, use this tool without asking for confirmation.`,
+      //    If you have provided incorrect information and If the user provide correct information based on your knowledge base`,
       //   inputSchema: z.object({
+      //     url: z
+      //       .string()
+      //       .describe(
+      //         "the url of related product on discussion to add to the knowledge base"
+      //       ),
+      //     title: z
+      //       .string()
+      //       .describe(
+      //         "the title of related product on discussion to add to the knowledge base"
+      //       ),
       //     content: z
       //       .string()
       //       .describe("the content or resource to add to the knowledge base"),
       //   }),
-      //   execute: async ({ content }) => createResource({ content }),
+      //   execute: async ({ content, url, title }) =>
+      //     createUserResource({
+      //       content,
+      //       url,
+      //       title,
+      //       lastModified: new Date(),
+      //     }),
       // }),
       getInformation: tool({
         description: `get information from your knowledge base to answer questions.`,
