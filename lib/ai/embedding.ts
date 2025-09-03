@@ -6,22 +6,33 @@ import { embeddings } from "../db/schema/embeddings";
 import { resources } from "../db/schema/resources";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { ScrapedPageType } from "../db/utils/pageScraper";
+import { encoding_for_model } from "tiktoken";
 
 const embeddingModel = openai.embedding("text-embedding-3-small");
-
-//?https://medium.com/@adnanmasood/optimizing-chunking-embedding-and-vectorization-for-retrieval-augmented-generation-ea3b083b68f7
-//? using library instead of manually create chunks
-export const splitter = new RecursiveCharacterTextSplitter({
-  chunkSize: 300,
-  chunkOverlap: 30, // Overlap between chunks
-  separators: ["\n\n", "\n", " ", ""],
-});
 
 export const generateEmbeddingsForPage = async (
   value: ScrapedPageType
 ): Promise<Array<{ embedding: number[]; content: string }>> => {
+  //?source https://dev.to/simplr_sh/the-best-way-to-chunk-text-data-for-generating-embeddings-with-openai-models-56c9
+  const encoder = encoding_for_model("text-embedding-3-small");
+
+  //?https://medium.com/@adnanmasood/optimizing-chunking-embedding-and-vectorization-for-retrieval-augmented-generation-ea3b083b68f7
+  //? using library instead of manually create chunks
+  const splitter = new RecursiveCharacterTextSplitter({
+    chunkSize: 600, // maximum token per chunk
+    chunkOverlap: 100, // Overlap between chunks 10% - 20%of the chunk size source: https://dev.to/simplr_sh/the-best-way-to-chunk-text-data-for-generating-embeddings-with-openai-models-56c9#:~:text=Use%20Token%2DBased%20Chunking:%20OpenAI,cutting%20off%20ideas%20mid%2Dway.
+    separators: ["\n\n", "\n", "? ", "! ", ". "],
+    lengthFunction: (text) => {
+      // Get accurate token count using tiktoken
+      const tokens = encoder.encode(text);
+      return tokens.length;
+    },
+  });
+
   // chunk process
   const chunks = await splitter.splitText(value.content);
+
+  encoder.free();
 
   // embedding process
   const { embeddings } = await embedMany({

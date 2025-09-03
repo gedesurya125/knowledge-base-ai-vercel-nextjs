@@ -97,10 +97,6 @@ export const loadData = async (params?: { forceReplace?: boolean }) => {
     // Scrapping process
     const scrappedPage = await scrapePage(urlToScrape);
 
-    // // Just for development ====
-    // const chunked = await splitter.splitText(scrappedPage.content);
-    // //===
-
     const message = await createResource(scrappedPage, lastPageModified);
 
     contents.push({ sitemap: sitemapItem, message });
